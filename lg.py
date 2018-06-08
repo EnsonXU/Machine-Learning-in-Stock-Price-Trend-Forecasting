@@ -12,53 +12,51 @@ df=pd.read_csv("/data/001nosma_train.csv")
 test=pd.read_csv("/data/001nosma_test.csv")
 '''
 
+'''
 df=pd.read_csv("/data/001sma_train.csv")
 test=pd.read_csv("/data/001sma_test.csv")
+'''
 
-#print (df.head())
-#show the summary of the data
-'''
-print (df.describe())
-print (df.std())
-'''
+df=pd.read_csv("/data/001c.csv")
+test=pd.read_csv("/data/001c.csv")
+
 data = df 
-#data = data.dropna(axis=0)
-#combos = copy.deepcopy(data) 
+data = data.dropna(axis=0)
+row_count = data.shape[0]  
 
-
-#data['intercept'] = 1.0  
-#print(data)
- 
 # set the target column
 train_cols = data.columns[1:]  
+#print(data[train_cols])
+#print(data['R'])
+#print(data[train_cols].iloc[0:2089])
+train_size = 2000
+logit = sm.Logit(data['R'].iloc[0:train_size], data[train_cols].iloc[0:train_size])  
    
-logit = sm.Logit(data['R'], data[train_cols])  
-   
+#print(data[train_cols].iloc[0:train_size])
 # fit the model  
 result = logit.fit()   
- 
+
+test_size = row_count - train_size   
 # add intercept?? 
 #test['intercept'] = 1.0  
 predict_cols = test.columns[1:] 
 
 # predict and save the result in predict column  
-test['predict'] = result.predict(test[predict_cols])  
-   
+output = result.predict(test[predict_cols].iloc[test_size:row_count])  
+
 #calculate the accuracy
-total = 0  
 hit = 0  
 
-for value in test.values:  
-  predict = value[-1]  
-  R = int(value[0])
-  total += 1 
-  #if the prediction is larger than 0.5, means the price is rising 
-  if predict >= 0.5: 
-      if R == 1:  
-          hit += 1 
-   #if the prediction is smaller than 0.5, means the price is falling
-  if predict < 0.5:
-      if R == 0:
-          hit += 1
-   
+for i in range(test_size,row_count-1):
+    if output[i] >= 0.5:
+        if test['R'][i]==1:
+            hit+=1
+    
+    if output[i] < 0.5:
+        if test['R'][i]==0:
+            hit+=1      
+      
+total = row_count-1 - test_size
+    
 print ('Total: %d, Hit: %d, Precision: %.2f' % (total, hit, 100.0*hit/total))  
+
