@@ -20,8 +20,8 @@ path1 =  r'/data/001nosma_train.csv'
 path2 =  r'/data/001nosma_test.csv'
 '''
 
-path1 =  r'/data/001c.csv'     
-path2 =  r'/data/001c.csv'
+path1 =  r'/data/3Mdata.csv'     
+path2 =  r'/data/3Mdata.csv'
 
 with open(path1, 'r') as f1:    
     reader = csv.reader(f1)     

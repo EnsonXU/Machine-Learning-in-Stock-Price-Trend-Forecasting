@@ -22,7 +22,7 @@ path1 =  r'/data/001c.csv'     #Address Definition
 path2 =  r'/data/001c.csv'
 '''
 
-df=pd.read_csv("/data/001c.csv")
+df=pd.read_csv("/data/3Mdata.csv")
 data = df 
 data = data.dropna(axis=0)
 row_count = data.shape[0] 

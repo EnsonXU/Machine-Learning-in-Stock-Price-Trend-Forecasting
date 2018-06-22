@@ -19,11 +19,10 @@ if __name__=='__main__':
     lg=[]
     rfr=[]
     svmr=[]
-    train_size = 2923
     
     for tw in range(1,91):
         #prepare for the train data and test data
-        df=pd.read_csv("/data/001lt2.csv")
+        df=pd.read_csv("/data/3Mlt2.csv")
         data = df 
         data = data.dropna(axis=0)
         row_count = data.shape[0] 
@@ -33,7 +32,7 @@ if __name__=='__main__':
         
         data = data.drop(columns=['ClPr'])
         #print(data)
-        data['Prev_HiPr'] = data['Prev_HiPr'].astype('float64')
+        #data['Prev_HiPr'] = data['Prev_HiPr'].astype('float64')
         #test=data
         
         # set the target column
@@ -46,7 +45,7 @@ if __name__=='__main__':
         X_test_std = sc.transform(X_test)
         
         #fit_intercept = False, C = 1e9
-        model = LogisticRegression(penalty="l2",C=10,solver='newton-cg')
+        model = LogisticRegression(penalty="l2",C=10,multi_class='ovr',solver='newton-cg')
         result = model.fit(X_train_std, Y_train)
         
         prepro =result.predict_proba(X_test_std)
@@ -56,14 +55,16 @@ if __name__=='__main__':
         lg.append(acc)
         #lg.append(hit/len(X_test_std))
         
-        rf=RandomForestClassifier(bootstrap=True,max_depth=20,max_features='sqrt',min_samples_split=2, n_estimators=80)
+        rf=RandomForestClassifier(bootstrap=True,max_depth=10,max_features='log2',max_leaf_nodes=3, 
+                                                    min_samples_leaf=3,min_samples_split=3,
+                                                    n_estimators=150)
         rf.fit(X_train_std, Y_train)
         output = rf.predict(X_test_std)
         acc2 = rf.score(X_test_std,Y_test)
        
         rfr.append(acc2)
         
-        clf = svm.SVC(C=100,gamma=0.001,kernel='linear')
+        clf = svm.SVC(C=1000,gamma=0.001,kernel='linear')
         clf.fit(X_train_std, Y_train)  
         p_result = clf.predict(X_test_std)
         acc3 = clf.score(X_test_std,Y_test)
