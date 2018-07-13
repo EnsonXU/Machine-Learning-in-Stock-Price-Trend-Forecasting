@@ -20,8 +20,12 @@ df=pd.read_csv("/data/001sma_train.csv")
 test=pd.read_csv("/data/001sma_test.csv")
 '''
 
-df=pd.read_csv("/data/3Mdata.csv")
-test=pd.read_csv("/data/3Mdata.csv")
+'''
+df=pd.read_csv("/data/3Mdata0.csv")
+test=pd.read_csv("/data/3Mdata0.csv")
+'''
+df=pd.read_csv("/data/renshou.csv")
+test=pd.read_csv("/data/renshou.csv")
 
 data = df 
 data = data.dropna(axis=0)
@@ -38,7 +42,7 @@ X_train_std = sc.transform(X_train)
 X_test_std = sc.transform(X_test)
 
 #fit_intercept = False, C = 1e9
-model = LogisticRegression(penalty="l2",C=10,solver='newton-cg')
+model = LogisticRegression(penalty="l2",C=10,multi_class='multinomial',solver='lbfgs')
 result = model.fit(X_train_std, Y_train)
 
 prepro =result.predict_proba(X_test_std)

@@ -21,11 +21,13 @@ path2 =  r'/data/001sma_test_svm.csv'
 path1 =  r'/data/001c.csv'     #Address Definition
 path2 =  r'/data/001c.csv'
 '''
-
-df=pd.read_csv("/data/3Mdata.csv")
+'''
+df=pd.read_csv("/data/3Mdata0.csv")
+'''
+df=pd.read_csv("/data/renshou.csv")
 data = df 
-data = data.dropna(axis=0)
-row_count = data.shape[0] 
+#data = data.dropna(axis=0)
+#row_count = data.shape[0] 
 
 train_cols = data.columns[1:]  
 X_train, X_test, Y_train, Y_test = train_test_split(data[train_cols], data['R'], test_size=0.3, random_state=0)

@@ -20,8 +20,13 @@ path1 =  r'/data/001nosma_train.csv'
 path2 =  r'/data/001nosma_test.csv'
 '''
 
-path1 =  r'/data/3Mdata.csv'     
-path2 =  r'/data/3Mdata.csv'
+'''
+path1 =  r'/data/3Mdata0.csv'     
+path2 =  r'/data/3Mdata0.csv'
+'''
+path1 =  r'/data/renshou.csv'     
+path2 =  r'/data/renshou.csv'
+
 
 with open(path1, 'r') as f1:    
     reader = csv.reader(f1)     
@@ -47,7 +52,7 @@ parameter_gridsearch = {
                  'bootstrap': [True, False],
                  }
 
-randomforest = RandomForestClassifier()
+randomforest = RandomForestClassifier(bootstrap=True,max_depth=20,max_features='auto',min_samples_leaf=3, min_samples_split=2, n_estimators=50)
 
 row_count = train.shape[0]  
 train_size = math.floor(row_count/2)

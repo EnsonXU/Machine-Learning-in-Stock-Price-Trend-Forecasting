@@ -44,81 +44,89 @@ def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
         agg.dropna(inplace=True)
     return agg
 
-# load dataset
-dataset = pd.read_csv("/data/3M0.csv", header=0, index_col=0)
-values = dataset.values
-# integer encode direction
-encoder = LabelEncoder()
-values[:,4] = encoder.fit_transform(values[:,4])
-# ensure all data is float
-values = values.astype('float32')
-#print(values)
-# normalize features
-scaler = MinMaxScaler(feature_range=(0, 1))
-scaled = scaler.fit_transform(values)
-#print(scaled)
-# frame as supervised learning
-reframed = series_to_supervised(scaled, 1, 1)
-# drop columns we don't want to predict
-reframed.drop(reframed.columns[[8,9,10,11,12,13]], axis=1, inplace=True)
-print(reframed.head())
+if __name__=='__main__':
+    # load dataset , header=0, index_col=0
+    dataset = pd.read_csv("/data/alldata.csv")
+    print(dataset)
+    values = dataset.values
 
+    # integer encode direction
+    #encoder = LabelEncoder()
+    #values[:,4] = encoder.fit_transform(values[:,4])
+    # ensure all data is float
+    values = values.astype('float32')
 
-# split into train and test sets
-values = reframed.values
-n_train_days = 365
-train = values[:n_train_days, :]
-test = values[n_train_days:, :]
-# split into input and outputs
-train_X, train_y = train[:, :-1], train[:, -1]
-test_X, test_y = test[:, :-1], test[:, -1]
-# reshape input to be 3D [samples, timesteps, features]
-train_X = train_X.reshape((train_X.shape[0], 1, train_X.shape[1]))
-test_X = test_X.reshape((test_X.shape[0], 1, test_X.shape[1]))
-print(train_X.shape, train_y.shape, test_X.shape, test_y.shape)
-
-'''
-# design network
-model = Sequential()
-model.add(LSTM(50, input_shape=(train_X.shape[1], train_X.shape[2])))
-model.add(Dense(1))
-model.compile(loss='mae', optimizer='adam')
-# fit network
-# epochs=50,
-history = model.fit(train_X, train_y, batch_size=72, validation_data=(test_X, test_y), verbose=2, shuffle=False)
-# plot history
-pyplot.plot(history.history['loss'], label='train')
-pyplot.plot(history.history['val_loss'], label='test')
-pyplot.legend()
-pyplot.show()
-'''
-
-# design network
-model = Sequential()
-model.add(LSTM(50, input_shape=(train_X.shape[1], train_X.shape[2])))
-model.add(Dense(1))
-model.compile(loss='mae', optimizer='adam')
-# fit network
-#epochs=50,
-history = model.fit(train_X, train_y, nb_epoch=50,batch_size=72, validation_data=(test_X, test_y), verbose=2, shuffle=False)
-# plot history
-pyplot.plot(history.history['loss'], label='train')
-pyplot.plot(history.history['val_loss'], label='test')
-pyplot.legend()
-pyplot.show()
-
-# make a prediction
-yhat = model.predict(test_X)
-test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
-# invert scaling for forecast
-inv_yhat = concatenate((yhat, test_X[:, 1:]), axis=1)
-inv_yhat = scaler.inverse_transform(inv_yhat)
-inv_yhat = inv_yhat[:,0]
-# invert scaling for actual
-test_y = test_y.reshape((len(test_y), 1))
-inv_y = concatenate((test_y, test_X[:, 1:]), axis=1)
-inv_y = scaler.inverse_transform(inv_y)
-inv_y = inv_y[:,0]
-# calculate RMSE
-rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
-print('Test RMSE: %.3f' % rmse)
+    '''
+    # normalize features
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaled = scaler.fit_transform(values)
+    '''
+    #print(scaled)
+    # frame as supervised learning
+    reframed = series_to_supervised(values, 1, 1)
+    # drop columns we don't want to predict
+    print(reframed.head())
+    #reframed.drop(reframed.columns[[8,9,10,11,12,13]], axis=1, inplace=True)
+    reframed.drop(reframed.columns[[5,6,7]], axis=1, inplace=True)
+    
+    
+    # split into train and test sets
+    values = reframed.values
+    n_train_days = 10000
+    train = values[:n_train_days, :]
+    test = values[n_train_days:, :]
+    # split into input and outputs
+    train_X, train_y = train[:, :-1], train[:, -1]
+    test_X, test_y = test[:, :-1], test[:, -1]
+    # reshape input to be 3D [samples, timesteps, features]
+    train_X = train_X.reshape((train_X.shape[0], 1, train_X.shape[1]))
+    test_X = test_X.reshape((test_X.shape[0], 1, test_X.shape[1]))
+    print(train_X.shape, train_y.shape, test_X.shape, test_y.shape)
+    
+    
+    # design network
+    model = Sequential()
+    model.add(LSTM(50, input_shape=(train_X.shape[1], train_X.shape[2])))
+    model.add(Dense(1))
+    model.compile(loss='mae', optimizer='adam')
+    # fit network
+    #epochs=50,
+    history = model.fit(train_X, train_y,nb_epoch=5, batch_size=72, validation_data=(test_X, test_y), verbose=2, shuffle=False)
+    
+    '''
+    # plot history
+    pyplot.plot(history.history['loss'], label='train')
+    pyplot.plot(history.history['val_loss'], label='test')
+    pyplot.legend()
+    pyplot.show()
+    '''
+    
+    # make a prediction
+    yhat = model.predict(test_X)
+    print(yhat)
+    print(test_y)
+    hit=0
+    for i in range(0,len(yhat)-1):
+        if yhat[i]*test_y[i]>0 :
+            hit+=1
+    print("Accuracy:",hit/len(yhat))
+        
+    '''
+    test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
+    # invert scaling for forecast
+    inv_yhat = concatenate((yhat, test_X[:, 1:]), axis=1)
+    inv_yhat = scaler.inverse_transform(inv_yhat)
+    inv_yhat = inv_yhat[:,0]
+    # invert scaling for actual
+    test_y = test_y.reshape((len(test_y), 1))
+    inv_y = concatenate((test_y, test_X[:, 1:]), axis=1)
+    inv_y = scaler.inverse_transform(inv_y)
+    inv_y = inv_y[:,0]
+    # calculate RMSE
+    rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
+    print('Test RMSE: %.3f' % rmse)
+    test_X = test_X.reshape((test_X.shape[0], 1, test_X.shape[1]))
+    #test_y = test_y.reshape((test_y.shape[0], 1, test_y.shape[1]))
+    score = model.evaluate(test_X, test_y,batch_size=128, verbose=1)
+    print("Model Accuracy: %.2f%%" % (score*100))
+    '''

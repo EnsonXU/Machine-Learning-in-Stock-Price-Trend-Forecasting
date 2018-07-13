@@ -45,7 +45,7 @@ if __name__=='__main__':
         X_test_std = sc.transform(X_test)
         
         #fit_intercept = False, C = 1e9
-        model = LogisticRegression(penalty="l2",C=10,multi_class='ovr',solver='newton-cg')
+        model = LogisticRegression(penalty="l2",C=1,multi_class='ovr',solver='newton-cg')
         result = model.fit(X_train_std, Y_train)
         
         prepro =result.predict_proba(X_test_std)
@@ -55,8 +55,8 @@ if __name__=='__main__':
         lg.append(acc)
         #lg.append(hit/len(X_test_std))
         
-        rf=RandomForestClassifier(bootstrap=True,max_depth=10,max_features='log2',max_leaf_nodes=3, 
-                                                    min_samples_leaf=3,min_samples_split=3,
+        rf=RandomForestClassifier(bootstrap=False,max_depth=100,max_features='auto',max_leaf_nodes=4, 
+                                                    min_samples_leaf=1,min_samples_split=2,
                                                     n_estimators=150)
         rf.fit(X_train_std, Y_train)
         output = rf.predict(X_test_std)
@@ -64,7 +64,7 @@ if __name__=='__main__':
        
         rfr.append(acc2)
         
-        clf = svm.SVC(C=1000,gamma=0.001,kernel='linear')
+        clf = svm.SVC(C=1000,gamma=0.001,kernel='rbf')
         clf.fit(X_train_std, Y_train)  
         p_result = clf.predict(X_test_std)
         acc3 = clf.score(X_test_std,Y_test)

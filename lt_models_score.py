@@ -31,7 +31,7 @@ if __name__=='__main__':
     
     #evaluation of lg penalty=l2
     pipe_line = Pipeline([("std",StandardScaler()),  
-                          ("clf",LogisticRegression(penalty="l2",C=10,multi_class='ovr',solver='newton-cg'))])  
+                          ("clf",LogisticRegression(penalty="l2",C=1,multi_class='ovr',solver='newton-cg'))])  
     train_sizes,train_score,test_score = learning_curve(estimator=pipe_line,X=train_x,y=train_y,train_sizes=np.linspace(0.1,1.0,10),cv=10,n_jobs=1)  
 
     train_mean = np.mean(train_score,axis=1)  
@@ -77,8 +77,8 @@ if __name__=='__main__':
     #n_estimators=80, max_depth=20, min_samples_split=2, min_samples_leaf=1, max_features='auto' , bootstrap=False
     #bootstrap': True, 'max_depth': 20, 'max_features': 'sqrt', 'min_samples_leaf': 4, 'min_samples_split': 2, 'n_estimators': 80
     pipe_line = Pipeline([("std",StandardScaler()),  
-                      ("clf",RandomForestClassifier(bootstrap=True,max_depth=10,max_features='log2',max_leaf_nodes=3, 
-                                                    min_samples_leaf=3,min_samples_split=3,
+                      ("clf",RandomForestClassifier(bootstrap=False,max_depth=100,max_features='auto',max_leaf_nodes=4, 
+                                                    min_samples_leaf=1,min_samples_split=2,
                                                     n_estimators=150))])  
     train_sizes,train_score,test_score = learning_curve(estimator=pipe_line,X=train_x,y=train_y,train_sizes=np.linspace(0.1,1.0,10),cv=10,n_jobs=1)  
  
@@ -102,7 +102,7 @@ if __name__=='__main__':
     
     #evaluation of SVM
     pipe_line = Pipeline([("std",StandardScaler()),  
-                      ("clf",svm.SVC(C=1000,gamma=0.001,kernel='linear'))])  
+                      ("clf",svm.SVC(C=1000,gamma=0.001,kernel='rbf'))])  
     train_sizes,train_score,test_score = learning_curve(estimator=pipe_line,X=train_x,y=train_y,train_sizes=np.linspace(0.1,1.0,10),cv=10,n_jobs=1)  
 
     train_mean = np.mean(train_score,axis=1)  

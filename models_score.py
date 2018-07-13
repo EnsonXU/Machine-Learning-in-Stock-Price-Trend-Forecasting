@@ -27,7 +27,7 @@ if __name__=='__main__':
     
     #evaluation of lg penalty=l2
     pipe_line = Pipeline([("std",StandardScaler()),  
-                          ("clf",LogisticRegression(penalty="l2",C=10,solver='newton-cg'))])  
+                          ("clf",LogisticRegression(penalty="l2",C=10,multi_class='multinomial',solver='lbfgs'))])  
     train_sizes,train_score,test_score = learning_curve(estimator=pipe_line,X=train_x,y=train_y,train_sizes=np.linspace(0.1,1.0,10),cv=10,n_jobs=1)  
 
     train_mean = np.mean(train_score,axis=1)  
@@ -73,7 +73,7 @@ if __name__=='__main__':
     #n_estimators=80, max_depth=20, min_samples_split=2, min_samples_leaf=1, max_features='auto' , bootstrap=False
     #bootstrap': True, 'max_depth': 20, 'max_features': 'sqrt', 'min_samples_leaf': 4, 'min_samples_split': 2, 'n_estimators': 80
     pipe_line = Pipeline([("std",StandardScaler()),  
-                      ("clf",RandomForestClassifier(bootstrap=True,max_depth=20,max_features='sqrt',min_samples_split=2, n_estimators=80))])  
+                      ("clf",RandomForestClassifier(bootstrap=True,max_depth=20,max_features='auto',min_samples_leaf=3, min_samples_split=2, n_estimators=50))])  
     train_sizes,train_score,test_score = learning_curve(estimator=pipe_line,X=train_x,y=train_y,train_sizes=np.linspace(0.1,1.0,10),cv=10,n_jobs=1)  
  
     train_mean = np.mean(train_score,axis=1)  
@@ -94,6 +94,7 @@ if __name__=='__main__':
     #plt.ylim([0.8,1.0])  
     plt.show()  
     
+    '''
     #evaluation of SVM
     pipe_line = Pipeline([("std",StandardScaler()),  
                       ("clf",svm.SVC(C=100,gamma=0.001,kernel='linear'))])  
@@ -116,4 +117,4 @@ if __name__=='__main__':
     plt.legend(loc="lower right")  
     #plt.ylim([0.8,1.0])  
     plt.show()  
-
+    '''

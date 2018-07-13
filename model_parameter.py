@@ -15,7 +15,7 @@ from sklearn.cross_validation import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 
 
-df=pd.read_csv("/data/3Mdata.csv")
+df=pd.read_csv("/data/3Mdata0.csv")
 data = df 
 data = data.dropna(axis=0)
 row_count = data.shape[0]  
@@ -48,7 +48,7 @@ print(gs.best_params_)
 
 rf = RandomForestClassifier()
 param_grid=[{ 'max_depth' : [1, 20],  #depth of each decision tree
-             'n_estimators': [80, 50],  #count of decision tree
+             'n_estimators': [100, 50],  #count of decision tree
              'max_features': ['sqrt', 'auto', 'log2'],      
              'min_samples_split': [2],      
              'min_samples_leaf': [1, 3, 4],
