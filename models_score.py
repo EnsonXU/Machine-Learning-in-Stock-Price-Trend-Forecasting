@@ -17,7 +17,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 if __name__=='__main__':
     
-    data=pd.read_csv("/data/3Mdata.csv")
+    data=pd.read_csv("/data/renshou.csv")
     data = data.dropna(axis=0)
     row_count = data.shape[0]  
     X = data.ix[:,1:]  
@@ -25,6 +25,7 @@ if __name__=='__main__':
     
     train_x,test_x,train_y,test_y = train_test_split(X,Y,test_size=0.3,random_state=0) 
     
+    '''
     #evaluation of lg penalty=l2
     pipe_line = Pipeline([("std",StandardScaler()),  
                           ("clf",LogisticRegression(penalty="l2",C=10,multi_class='multinomial',solver='lbfgs'))])  
@@ -93,11 +94,12 @@ if __name__=='__main__':
     plt.legend(loc="lower right")  
     #plt.ylim([0.8,1.0])  
     plt.show()  
-    
     '''
+    
     #evaluation of SVM
+    #C=100,gamma=0.001,kernel='linear'
     pipe_line = Pipeline([("std",StandardScaler()),  
-                      ("clf",svm.SVC(C=100,gamma=0.001,kernel='linear'))])  
+                      ("clf",svm.SVC())])  
     train_sizes,train_score,test_score = learning_curve(estimator=pipe_line,X=train_x,y=train_y,train_sizes=np.linspace(0.1,1.0,10),cv=10,n_jobs=1)  
 
     train_mean = np.mean(train_score,axis=1)  
@@ -117,4 +119,4 @@ if __name__=='__main__':
     plt.legend(loc="lower right")  
     #plt.ylim([0.8,1.0])  
     plt.show()  
-    '''
+    

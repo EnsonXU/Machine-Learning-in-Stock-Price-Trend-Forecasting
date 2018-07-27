@@ -72,7 +72,7 @@ if __name__=='__main__':
     
     # split into train and test sets
     values = reframed.values
-    n_train_days = 10000
+    n_train_days = 50000
     train = values[:n_train_days, :]
     test = values[n_train_days:, :]
     # split into input and outputs
@@ -91,7 +91,7 @@ if __name__=='__main__':
     model.compile(loss='mae', optimizer='adam')
     # fit network
     #epochs=50,
-    history = model.fit(train_X, train_y,nb_epoch=5, batch_size=72, validation_data=(test_X, test_y), verbose=2, shuffle=False)
+    history = model.fit(train_X, train_y,nb_epoch=50, batch_size=72, validation_data=(test_X, test_y), verbose=2, shuffle=False)
     
     '''
     # plot history

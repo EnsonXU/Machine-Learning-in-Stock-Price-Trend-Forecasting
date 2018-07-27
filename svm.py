@@ -36,7 +36,8 @@ sc.fit(X_train)
 X_train_std = sc.transform(X_train)
 X_test_std = sc.transform(X_test)
 
-clf = svm.SVC(C=100,gamma=0.001,kernel='linear')
+#C=100,gamma=0.001,kernel='linear'
+clf = svm.SVC()
 clf.fit(X_train_std, Y_train)  
 p_result = clf.predict(X_test_std)
 acc = clf.score(X_test_std,Y_test)      
